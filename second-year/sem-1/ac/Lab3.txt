@@ -1,0 +1,187 @@
+/*module mux_1s_1b (
+  input s,d1,d0,
+  output o
+  );
+  
+assign o = s ? d1 : d0;
+endmodule*/
+
+// P.3.1.1
+
+module mux_1s_1b (
+  input s,d1,d0,
+  output reg o // tip de date registru
+  );
+  
+always @(*) begin // {
+    
+    if (s) // s==1
+      o = d1;
+    else
+      o = d0;
+      
+end // }
+
+endmodule
+
+
+
+/*module dec_2x_4 (
+  input [1:0] x,
+  input e,
+  output [3:0] y
+  );
+  
+assign y = e << x;
+
+endmodule*/
+
+
+/*module dec_2x_4 (
+  input [1:0] x,
+  input e,
+  output reg [3:0] y
+  );
+
+always @(*) begin
+  
+    if (e)
+      if (x==0)
+        y = 4'b0001;
+      else
+        if (x==1)
+          y = 4'b0010;
+        else
+          if (x==2)
+            y = 4'b0100;
+          else
+            if (x==3)
+              y = 4'b1000;
+            else
+              y = 4'b0;
+            end
+          endmodule*/
+          
+module dec_2x_4 (
+  input [1:0] x,
+  input e,
+  output reg [3:0] y
+  );
+
+always @(*) begin // {
+  
+    case ({e,x}) // {
+      
+      3'b100 : y = 4'b0001;
+      3'b101 : y = 4'b0010;
+      3'b110 : y = 4'b0100;
+      3'b111 : y = 4'b1000;
+      // default case
+      3'b0?? : y = 4'b0;
+    endcase // }
+  end // }
+endmodule
+
+module mux_3s_1b (
+  input [7:0] d,
+  input [2:0] s,
+  output o
+  );
+  
+wire w1, w2, w3, w4, w5, w6; // [5:0]w
+
+// Layer 1
+
+mux_1s_1b m1 (
+                .d1(d[7]),
+                .d0(d[6]),
+                .s(s[0]),
+                .o(w1)
+                );
+
+mux_1s_1b m2 ( 
+                .d1(d[5]),
+                .d0(d[4]),
+                .s(s[0]),
+                .o(w2)
+                );
+
+mux_1s_1b m3 ( 
+                .d1(d[3]),
+                .d0(d[2]),
+                .s(s[0]),
+                .o(w3)
+                );
+
+mux_1s_1b m4 ( 
+                .d1(d[1]),
+                .d0(d[0]),
+                .s(s[0]),
+                .o(w4)
+                );
+
+// Layer 2
+
+mux_1s_1b m5 ( 
+                .d1(w1),
+                .d0(w2),
+                .s(s[1]),
+                .o(w5)
+                );
+                
+mux_1s_1b m6 ( 
+                .d1(w3),
+                .d0(w4),
+                .s(s[1]),
+                .o(w6)
+                );
+
+// Layer 3
+
+mux_1s_1b m7 ( 
+                .d1(w5),
+                .d0(w6),
+                .s(s[2]),
+                .o(o)
+                );
+
+endmodule
+
+
+Proiectati un multiplexor 8 la 1 mux_3s_1b. Implementati modulul arh. ierarhice cu instante mux_2s_1b si mux_1s_1b.                
+module mux_2s_1b (
+	input [3:0] d,
+	input [1:0] s,
+	output 0
+	);
+assign 0 = s[1] ? (s[0] ? d[3] : d[2]) : (s[0] ? d[1] : d[0]);
+endmodule
+
+
+module mux_3s_1b (
+	input [7:0] d,
+	input [2:0] s,
+	output o
+	);
+wire w1, w2;
+//Layer 1
+mux_2s_1b m1(
+		.d(d[7:4]),
+		.s(s[1:0),
+		.o(w1)
+		);
+
+mux_2s_1b m2(
+		.d(d[3:0]),
+		.s(s[1:0),
+		.o(w2)
+		);
+//Layer 2
+mux_1s_1b m3(
+		.d1(w1),
+		.d0(w2),
+		.s(s[2]),
+		.o(o)
+		);
+endmodule
+	
